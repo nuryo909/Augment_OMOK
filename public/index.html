@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>증강 오목 v0.4 | 온라인 2인 대국</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app">
+<header><div><p class="eyebrow">BOARD GAME LAB · 001</p><h1 class="title">증강 오목<span style="color:#b4966c">.</span></h1><div class="subtitle">방 코드로 접속하는 실시간 2인용 증강 오목 · 10 · 30 · 50수에 증강 선택</div></div><span class="tag">ONLINE · v0.4</span></header>
+<div class="layout"><section class="board-panel"><div class="board-heading"><strong>15 × 15 오목판</strong><span class="move-count" id="moveCount">0수 진행</span></div><div class="board black-turn" id="board"><div class="intersections" id="intersections" aria-label="오목판"></div></div><div id="statusbar" class="statusbar" role="status"><span class="dot"></span><span id="status">흑이 먼저 시작합니다. 교차점을 눌러 돌을 놓으세요.</span></div></section>
+<aside class="sidebar"><section class="card"><p class="kicker">PLAYERS</p><div class="players"><div class="player active" id="playerBlack"><span class="avatar b"></span><div><div class="player-name">흑</div><div class="player-sub" id="blackCount">0개 착수</div></div><div class="player-state" id="blackState">진행 중</div></div><div class="player" id="playerWhite"><span class="avatar w"></span><div><div class="player-name">백</div><div class="player-sub" id="whiteCount">0개 착수</div></div><div class="player-state" id="whiteState">대기</div></div></div><div class="buttons"><button class="btn" id="undo" disabled>↶ 무르기 요청</button><button class="btn primary" id="reset" disabled>↻ 새 대국 요청</button></div></section>
+<section class="card online-room"><p class="kicker">ONLINE ROOM</p><div class="room-code" id="roomCode">------</div><div class="room-controls"><button class="btn" id="copyInvite">🔗 초대 링크 복사</button><button class="btn" id="leaveRoom">↩ 로비로</button></div><div class="connection-line" id="connectionStatus">연결 확인 중</div><div class="room-role" id="myRole"></div></section><section class="card"><p class="kicker">RULES</p><div class="rules"><b>● 흑 선공 · ○ 백 후공</b><br>흑: 정확히 5개를 잇으면 승리<br>백: 5개 이상을 이으면 승리<br>흑은 <b>33·44·장목 금수</b> 적용 (증강 예외 가능)<br>가로·세로·대각선 모두 인정</div></section>
+<section class="card"><p class="kicker">RECENT MOVES</p><div id="history" class="history"><span class="empty-history">아직 놓인 돌이 없습니다.</span></div></section>
+<section class="card"><p class="kicker">AUGMENTS · PUBLIC</p><div class="owned-wrap"><div><div class="owned-heading"><span><span class="small-stone"></span> 흑이 선택한 증강</span></div><div class="owned-list" id="augmentsBlack"></div></div><div><div class="owned-heading"><span><span class="small-stone white"></span> 백이 선택한 증강</span></div><div class="owned-list" id="augmentsWhite"></div></div></div><div class="note">상대의 증강, 축적된 잔해, 능력별 쿨타임이 모두 공개됩니다. 증강은 대국 종료까지 유지됩니다.</div></section><section class="card"><p class="kicker">AUGMENT ACTIONS</p><div id="abilityArea"></div></section><section class="card"><p class="kicker">AUGMENT ROUNDS</p><div class="rules">양쪽 플레이어가 <b>10·30·50수 직후</b> 각각 증강 1개를 선택합니다. 선택한 증강은 <b>대국 종료까지 영구 보유</b>합니다. 액티브 능력은 일반 착수 대신 1턴을 사용하며, 사용 후 지정된 <b>자기 차례 수</b>만큼 쿨타임이 발생합니다.</div><div class="milestone"><span>10수</span><span>30수</span><span>50수</span></div></section></aside></div>
+</div>
+<div class="lobby-overlay" id="lobbyOverlay">
+  <div class="lobby-card">
+   <span class="draft-kicker">BOARD GAME LAB · ONLINE</span>
+   <h2>증강 오목<span style="color:#b4966c">.</span></h2>
+   <p>방을 만들고 코드를 친구에게 보내세요. 각자의 브라우저에서 흑·백으로 대국할 수 있어요.</p>
+   <button class="btn primary lobby-create" id="createRoom">＋ 새 대국 방 만들기</button>
+   <div class="lobby-sep"><span>또는 방 코드로 입장</span></div>
+   <form id="joinForm" class="lobby-join"><input id="joinCode" maxlength="6" autocomplete="off" placeholder="6자리 방 코드" aria-label="6자리 방 코드"><button class="btn" type="submit">입장하기</button></form>
+   <div class="lobby-feedback" id="lobbyFeedback" role="status"></div>
+   <small>로그인 불필요 · 별도 설치 불필요 · 서버 실행 중에만 방이 유지됩니다.</small>
+  </div>
+ </div>
+ <div class="wait-overlay" id="waitOverlay" hidden><div class="wait-card"><span class="draft-kicker">WAITING FOR A FRIEND</span><h2>상대를 기다리고 있어요</h2><p>친구에게 아래 코드를 보내주세요. 입장하면 자동으로 대국이 시작돼요.</p><div class="wait-code" id="waitCode"></div><button class="btn primary" id="waitCopy">초대 링크 복사</button><button class="btn" id="waitLeave">로비로 나가기</button></div></div>
+ <div class="request-overlay" id="requestOverlay" hidden><div class="request-card"><span class="draft-kicker">GAME REQUEST</span><h2 id="requestTitle">요청이 도착했습니다</h2><p id="requestBody"></p><div class="request-buttons" id="requestButtons"></div></div></div>
+<div class="draft-overlay" id="draftOverlay" role="dialog" aria-modal="true" aria-labelledby="draftTitle" hidden><div class="draft-dialog"><div class="draft-top"><span class="draft-kicker">CHOOSE YOUR AUGMENT</span><span class="draft-step" id="draftStep">흑 플레이어</span></div><h2 id="draftTitle">10수 증강 선택</h2><p>3개의 선택지 중 하나를 고르세요. 선택한 증강은 게임 종료까지 유지되며, 상대에게도 공개됩니다.</p><div class="draft-cards" id="draftCards"></div><div class="augment-note">선택은 되돌릴 수 없습니다. 두 플레이어의 선택이 끝나면 대국이 이어집니다.</div></div></div>
+<script src="/client.js" defer></script>
+</body>
+</html>
